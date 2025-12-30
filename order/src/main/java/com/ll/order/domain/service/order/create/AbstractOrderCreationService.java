@@ -41,7 +41,6 @@ public abstract class AbstractOrderCreationService {
     protected final OrderJpaRepository orderJpaRepository;
     protected final OrderItemJpaRepository orderItemJpaRepository;
     protected final OrderHistoryJpaRepository orderHistoryJpaRepository;
-    protected final TransactionTracingRepository transactionTracingRepository;
 
     protected final UserServiceClient userServiceClient;
     protected final ProductServiceClient productServiceClient;

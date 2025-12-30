@@ -39,7 +39,6 @@ public class DirectOrderCreationStrategy extends AbstractOrderCreationService {
             OrderJpaRepository orderJpaRepository,
             OrderItemJpaRepository orderItemJpaRepository,
             OrderHistoryJpaRepository orderHistoryJpaRepository,
-            TransactionTracingRepository transactionTracingRepository,
             UserServiceClient userServiceClient,
             ProductServiceClient productServiceClient,
             CartServiceClient cartServiceClient,
@@ -50,7 +49,6 @@ public class DirectOrderCreationStrategy extends AbstractOrderCreationService {
             CompensationService compensationService
     ) {
         super(orderJpaRepository, orderItemJpaRepository, orderHistoryJpaRepository,
-                transactionTracingRepository,
                 userServiceClient, productServiceClient, cartServiceClient,
                 paymentApiClient, orderValidator,
                 orderEventService, orderInventoryService, compensationService);

@@ -44,7 +44,6 @@ public class CartOrderCreationStrategy extends AbstractOrderCreationService {
             OrderJpaRepository orderJpaRepository,
             OrderItemJpaRepository orderItemJpaRepository,
             OrderHistoryJpaRepository orderHistoryJpaRepository,
-            TransactionTracingRepository transactionTracingRepository,
             UserServiceClient userServiceClient,
             ProductServiceClient productServiceClient,
             CartServiceClient cartServiceClient,
@@ -55,7 +54,6 @@ public class CartOrderCreationStrategy extends AbstractOrderCreationService {
             CompensationService compensationService
     ) {
         super(orderJpaRepository, orderItemJpaRepository, orderHistoryJpaRepository,
-                transactionTracingRepository,
                 userServiceClient, productServiceClient, cartServiceClient,
                 paymentApiClient, orderValidator,
                 orderEventService, orderInventoryService, compensationService);
