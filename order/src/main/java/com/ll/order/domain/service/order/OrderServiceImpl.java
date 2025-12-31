@@ -289,7 +289,7 @@ public class OrderServiceImpl implements OrderService {
             orderHistoryJpaRepository.save(failHistory);
 
             // 결제 실패 시 재고 롤백 (재고 차감이 주문 생성 시점에 이루어졌기 때문)
-            orderInventoryService.rollbackInventoryForOrder(orderItems, order.getCode());
+            orderInventoryService.rollbackInventoryForOrderFailed(orderItems, order.getCode());
 
             log.error("결제 처리 실패 - orderId: {}, paymentKey: {}, error: {}", orderCode, paymentKey, e.getMessage(), e);
             throw new BaseException(OrderErrorCode.PAYMENT_PROCESSING_FAILED);

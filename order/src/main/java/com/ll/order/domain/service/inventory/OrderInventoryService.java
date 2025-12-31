@@ -18,7 +18,7 @@ public class OrderInventoryService {
     private final CompensationService compensationService;
     private final InventoryRollbackEventOutboxService inventoryRollbackEventOutboxService;
 
-    public void rollbackInventoryForOrder(List<OrderItem> orderItems, String orderCode) {
+    public void rollbackInventoryForOrderFailed(List<OrderItem> orderItems, String orderCode) {
         log.warn("결제 실패로 인한 재고 롤백 시작 - orderItems: {}개", orderItems.size());
 
         List<InventoryDeduction> deductions = orderItems.stream()

@@ -19,7 +19,6 @@ import com.ll.order.domain.model.vo.response.user.UserResponse;
 import com.ll.order.domain.repository.OrderHistoryJpaRepository;
 import com.ll.order.domain.repository.OrderItemJpaRepository;
 import com.ll.order.domain.repository.OrderJpaRepository;
-import com.ll.order.domain.repository.TransactionTracingRepository;
 import com.ll.order.domain.service.compensation.CompensationService;
 import com.ll.order.domain.service.order.create.AbstractOrderCreationService;
 import com.ll.order.domain.service.event.OrderEventService;
@@ -139,7 +138,7 @@ public class DirectOrderCreationStrategy extends AbstractOrderCreationService {
             orderHistoryJpaRepository.save(failHistory);
 
             // 결제 실패 시 재고 롤백 (재고 차감이 결제 전에 이루어졌기 때문)
-            orderInventoryService.rollbackInventoryForOrder(orderItems, order.getCode());
+            orderInventoryService.rollbackInventoryForOrderFailed(orderItems, order.getCode());
 
             log.error("결제 처리 실패 - orderCode: {}, error: {}",
                     order.getCode(), e.getMessage(), e);
