@@ -1,4 +1,4 @@
-package com.ll.order.domain.mock.controller;
+package com.ll.order.global.mock.controller;
 
 import com.ll.order.domain.model.vo.request.OrderPaymentRequest;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package com.ll.order.integration;
 
 import com.ll.core.model.exception.BaseException;
-import com.ll.order.domain.mock.controller.ProductMockController;
+import com.ll.order.global.mock.controller.ProductMockController;
 import com.ll.order.domain.model.entity.Order;
 import com.ll.order.domain.model.enums.order.OrderStatus;
 import com.ll.order.domain.model.enums.order.OrderType;

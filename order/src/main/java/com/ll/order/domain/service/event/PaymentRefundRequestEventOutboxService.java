@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.core.model.vo.kafka.PaymentRefundRequestEvent;
 import com.ll.order.domain.model.entity.event.PaymentRefundEventOutbox;
-import com.ll.order.domain.messaging.producer.OrderEventProducer;
+import com.ll.order.global.messaging.producer.OrderEventProducer;
 import com.ll.order.domain.model.enums.order.OutboxStatus;
 import com.ll.order.domain.repository.PaymentRefundRequestEventOutboxRepository;
 import lombok.RequiredArgsConstructor;

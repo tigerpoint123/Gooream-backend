@@ -6,7 +6,7 @@ import com.fasterxml.uuid.Generators;
 import com.ll.core.model.vo.kafka.InventoryEvent;
 import com.ll.order.domain.model.entity.event.InventoryRollbackEventOutbox;
 import com.ll.order.domain.model.entity.event.InventoryRollbackEventOutbox.CompensationOutboxStatus;
-import com.ll.order.domain.messaging.producer.OrderEventProducer;
+import com.ll.order.global.messaging.producer.OrderEventProducer;
 import com.ll.order.domain.repository.InventoryRollbackEventOutboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

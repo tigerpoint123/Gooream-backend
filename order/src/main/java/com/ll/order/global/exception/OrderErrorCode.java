@@ -1,4 +1,4 @@
-package com.ll.order.domain.exception;
+package com.ll.order.global.exception;
 
 import com.ll.core.model.exception.BaseErrorCode;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.ll.order.domain.scheduler;
+package com.ll.order.global.scheduler;
 
 import com.ll.order.domain.service.event.OrderEventOutboxService;
 import lombok.RequiredArgsConstructor;

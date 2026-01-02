@@ -1,8 +1,8 @@
-package com.ll.order.domain.client;
+package com.ll.order.global.client;
 
 import com.ll.core.model.exception.BaseException;
 import com.ll.core.model.response.BaseResponse;
-import com.ll.order.domain.exception.OrderErrorCode;
+import com.ll.order.global.exception.OrderErrorCode;
 import com.ll.order.domain.model.vo.response.cart.CartItemsResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;

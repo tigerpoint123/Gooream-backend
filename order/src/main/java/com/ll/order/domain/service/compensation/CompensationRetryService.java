@@ -1,7 +1,7 @@
 package com.ll.order.domain.service.compensation;
 
 import com.ll.core.model.exception.BaseException;
-import com.ll.order.domain.exception.OrderErrorCode;
+import com.ll.order.global.exception.OrderErrorCode;
 import com.ll.order.domain.model.entity.Order;
 import com.ll.order.domain.model.entity.OrderItem;
 import com.ll.order.domain.model.entity.TransactionTracing;

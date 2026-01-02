@@ -1,10 +1,10 @@
 package com.ll.order.integration.success;
 
-import com.ll.order.domain.client.CartServiceClient;
-import com.ll.order.domain.client.PaymentServiceClient;
-import com.ll.order.domain.client.ProductServiceClient;
-import com.ll.order.domain.client.UserServiceClient;
-import com.ll.order.domain.messaging.producer.OrderEventProducer;
+import com.ll.order.global.client.CartServiceClient;
+import com.ll.order.global.client.PaymentServiceClient;
+import com.ll.order.global.client.ProductServiceClient;
+import com.ll.order.global.client.UserServiceClient;
+import com.ll.order.global.messaging.producer.OrderEventProducer;
 import com.ll.order.domain.model.enums.product.ProductStatus;
 import com.ll.order.domain.model.enums.user.AccountStatus;
 import com.ll.order.domain.model.enums.user.Grade;

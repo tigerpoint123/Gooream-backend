@@ -1,4 +1,4 @@
-package com.ll.order.domain.messaging.producer;
+package com.ll.order.global.messaging.producer;
 
 import com.ll.core.config.kafka.KafkaEventPublisher;
 import com.ll.core.model.vo.kafka.InventoryEvent;

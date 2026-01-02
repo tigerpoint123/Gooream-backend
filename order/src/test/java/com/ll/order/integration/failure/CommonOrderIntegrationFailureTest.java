@@ -1,7 +1,7 @@
 package com.ll.order.integration.failure;
 
 import com.ll.core.model.exception.BaseException;
-import com.ll.order.domain.exception.OrderErrorCode;
+import com.ll.order.global.exception.OrderErrorCode;
 import com.ll.order.domain.model.entity.Order;
 import com.ll.order.domain.model.entity.TransactionTracing;
 import com.ll.order.domain.model.entity.event.InventoryRollbackEventOutbox;
@@ -509,11 +509,6 @@ class CommonOrderIntegrationFailureTest extends BaseOrderIntegrationFailureTest 
                     BaseException baseException = (BaseException) exception;
                     assertThat(baseException.getErrorCode()).isEqualTo(OrderErrorCode.PAYMENT_PROCESSING_FAILED);
                 });
-
-        // 재고 롤백 로직 호출 확인
-        // 참고: saveToOutbox가 @Transactional만 있고 REQUIRES_NEW가 없으므로 같은 트랜잭션에 참여합니다.
-        // completePaymentWithKey 내부에서 예외가 throw되어 트랜잭션이 롤백되면 Outbox 데이터도 함께 롤백됩니다.
-        // 따라서 Outbox 데이터 조회는 불가능하며, 재고 롤백 로직이 호출되었는지는 로그로 확인할 수 있습니다.
 
         // 결제 완료 처리 호출 확인
         verify(paymentServiceClient, times(1)).requestTossPayment(any(OrderPaymentRequest.class));

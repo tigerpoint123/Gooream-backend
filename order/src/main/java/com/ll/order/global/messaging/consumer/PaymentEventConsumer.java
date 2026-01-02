@@ -1,4 +1,4 @@
-package com.ll.order.domain.messaging.consumer;
+package com.ll.order.global.messaging.consumer;
 
 import com.ll.core.model.vo.kafka.KafkaEventEnvelope;
 import com.ll.core.model.vo.kafka.PaymentRefundNotificationEvent;

@@ -1,11 +1,11 @@
 package com.ll.order.domain.service.order.create.strategy;
 
 import com.ll.core.model.exception.BaseException;
-import com.ll.order.domain.client.CartServiceClient;
-import com.ll.order.domain.client.PaymentServiceClient;
-import com.ll.order.domain.client.ProductServiceClient;
-import com.ll.order.domain.client.UserServiceClient;
-import com.ll.order.domain.exception.OrderErrorCode;
+import com.ll.order.global.client.CartServiceClient;
+import com.ll.order.global.client.PaymentServiceClient;
+import com.ll.order.global.client.ProductServiceClient;
+import com.ll.order.global.client.UserServiceClient;
+import com.ll.order.global.exception.OrderErrorCode;
 import com.ll.order.domain.model.entity.Order;
 import com.ll.order.domain.model.entity.OrderItem;
 import com.ll.order.domain.model.entity.history.OrderHistoryEntity;

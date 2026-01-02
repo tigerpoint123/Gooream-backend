@@ -1,8 +1,8 @@
 package com.ll.order.domain.service.order;
 
 import com.ll.core.model.exception.BaseException;
-import com.ll.order.domain.client.ProductServiceClient;
-import com.ll.order.domain.exception.OrderErrorCode;
+import com.ll.order.global.client.ProductServiceClient;
+import com.ll.order.global.exception.OrderErrorCode;
 import com.ll.order.domain.model.enums.order.OrderStatus;
 import com.ll.order.domain.model.enums.product.ProductStatus;
 import com.ll.order.domain.model.vo.request.ProductRequest;

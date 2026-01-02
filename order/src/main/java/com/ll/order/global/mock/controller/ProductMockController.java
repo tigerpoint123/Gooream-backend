@@ -1,13 +1,10 @@
-package com.ll.order.domain.mock.controller;
+package com.ll.order.global.mock.controller;
 
 import com.ll.core.model.response.BaseResponse;
-import com.ll.order.domain.client.ProductServiceClient;
 import com.ll.order.domain.model.enums.product.ProductStatus;
 import com.ll.order.domain.model.vo.response.product.ProductImageDto;
 import com.ll.order.domain.model.vo.response.product.ProductResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
