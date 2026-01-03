@@ -1,3 +1,4 @@
+/*
 package com.ll.products.domain.search.controller;
 import com.ll.core.model.persistence.BaseEntity;
 import com.ll.core.model.response.BaseResponse;
@@ -58,3 +59,4 @@ public class ProductSearchController {
         return BaseResponse.ok("재색인 완료");
     }
 }
+*/

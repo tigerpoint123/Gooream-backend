@@ -36,8 +36,6 @@ public class OrderInventoryService {
 
         for (InventoryDeduction deduction : successfulDeductions) {
             try {
-                // Outbox 패턴: 트랜잭션 내에서 먼저 Outbox에 저장 (PENDING 상태)
-                // 별도 프로세스가 Outbox를 읽어서 Kafka에 발행
                 inventoryRollbackEventOutboxService.saveToOutbox(
                         orderCode,
                         deduction.productCode(),

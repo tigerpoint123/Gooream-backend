@@ -17,8 +17,8 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 
   # Elasticsearch 설정
-  elasticsearch:
-    uris: http://localhost:9200
+  # elasticsearch:
+  #   uris: http://localhost:9200
 
   kafka:
     bootstrap-servers:
@@ -56,8 +56,8 @@ logging:
     com.ll.products.domain.search: DEBUG
     com.ll.products.domain.recommendation: DEBUG
     org.springframework.ai: DEBUG
-    org.springframework.data.elasticsearch: DEBUG
-    org.elasticsearch: DEBUG
+    # org.springframework.data.elasticsearch: DEBUG
+    # org.elasticsearch: DEBUG
 
 eureka:
   client:

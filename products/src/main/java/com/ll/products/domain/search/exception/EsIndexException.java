@@ -1,3 +1,4 @@
+/*
 package com.ll.products.domain.search.exception;
 
 import com.ll.core.model.exception.BaseErrorCode;
@@ -9,3 +10,4 @@ public class EsIndexException extends BaseException {
         super(ErrorCode.INTERNAL_SERVER_ERROR, customMessage);
     }
 }
+*/

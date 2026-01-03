@@ -66,18 +66,16 @@ public class OrderServiceImpl implements OrderService {
     private final UserServiceClient userServiceClient;
     private final ProductServiceClient productServiceClient;
     private final PaymentServiceClient paymentApiClient;
-    private final DepositServiceClient depositServiceClient;
 
     private final OrderValidator orderValidator;
     
     private final CompensationService compensationService;
     private final OrderEventService orderEventService;
     private final OrderInventoryService orderInventoryService;
-//    private final RefundEventOutboxService refundEventOutboxService;
     private final PaymentRefundRequestEventOutboxService paymentRefundRequestEventOutboxService;
     private final InventoryRollbackEventOutboxService inventoryRollbackEventOutboxService;
 
-    // Strategy 패턴을 위한 주문 생성 전략들
+    // Strategy 패턴
     private final CartOrderCreationStrategy cartOrderCreationStrategy;
     private final DirectOrderCreationStrategy directOrderCreationStrategy;
 
@@ -203,29 +201,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         for (OrderItem orderItem : orderItems) {
-//            if (buyerCode != null) {
-//                RefundEvent refundEvent = RefundEvent.from(
-//                        buyerCode,
-//                        orderItem.getCode(),
-//                        order.getCode(),
-//                        (long) orderItem.getPrice() * orderItem.getQuantity()
-//                );
-//                // 스케쥴
-//                try {
-//                    // 정산 서비스로 환불 이벤트 발행
-//                    refundEventOutboxService.saveToOutbox(refundEvent, order.getCode());
-//                    log.debug("환불 이벤트 Outbox 저장 완료 - orderCode: {}, orderItemCode: {}, amount: {}",
-//                            order.getCode(), orderItem.getCode(), refundEvent.amount());
-//                } catch (Exception e) {
-//                    String errorMessage = String.format("환불 이벤트 Outbox 저장 실패 - orderCode: %s, orderItemCode: %s, error: %s",
-//                            order.getCode(), orderItem.getCode(), e.getMessage());
-//                    log.error(errorMessage, e);
-//                    // Outbox 저장 실패 시 TransactionTracing에 실패 상태 저장
-//                    compensationService.compensationFailed(order.getCode(), errorMessage);
-//                }
-//            }
-
-            // 재고 복구 이벤트 발행 
+            // 재고 복구 이벤트 발행
             try {
                 inventoryRollbackEventOutboxService.saveToOutbox(
                         order.getCode(),

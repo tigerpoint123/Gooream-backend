@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+// import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import com.ll.products.domain.product.event.ProductEventListener;
-import com.ll.products.domain.search.repository.ProductSearchRepository;
-import com.ll.products.domain.search.service.ProductSearchService;
-import com.ll.products.domain.search.controller.ProductSearchController;
+// import com.ll.products.domain.search.repository.ProductSearchRepository;
+// import com.ll.products.domain.search.service.ProductSearchService;
+// import com.ll.products.domain.search.controller.ProductSearchController;
 import com.ll.products.domain.recommendation.service.VectorStoreService;
 import com.ll.products.domain.recommendation.service.RecommendationService;
 import com.ll.products.domain.recommendation.service.EmbeddingService;
@@ -47,20 +47,20 @@ class ProductInventoryConcurrencyTest extends MySQLTestContainer {
     private ProductRepository productRepository;
 
     // Elasticsearch 관련 빈 모킹 (동시성 테스트에서는 불필요)
-    @MockitoBean
-    private ElasticsearchOperations elasticsearchOperations;
+    // @MockitoBean
+    // private ElasticsearchOperations elasticsearchOperations;
 
-    @MockitoBean
-    private ProductSearchRepository productSearchRepository;
+    // @MockitoBean
+    // private ProductSearchRepository productSearchRepository;
 
     @MockitoBean
     private ProductEventListener productEventListener;
 
-    @MockitoBean
-    private ProductSearchService productSearchService;
+    // @MockitoBean
+    // private ProductSearchService productSearchService;
 
-    @MockitoBean
-    private ProductSearchController productSearchController;
+    // @MockitoBean
+    // private ProductSearchController productSearchController;
 
     // Qdrant/임베딩 관련 빈 모킹 (동시성 테스트에서는 불필요)
     @MockitoBean

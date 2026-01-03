@@ -1,3 +1,4 @@
+/*
 package com.ll.products.domain.search.document;
 
 import com.ll.products.domain.product.model.entity.Product;
@@ -92,3 +93,4 @@ public class ProductDocument {
                 .build();
     }
 }
+*/

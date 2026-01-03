@@ -1,3 +1,4 @@
+/*
 package com.ll.products.domain.search.service;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
@@ -240,3 +241,4 @@ public class ProductSearchService {
         }
     }
 }
+*/

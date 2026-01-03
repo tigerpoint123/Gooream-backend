@@ -1,3 +1,4 @@
+/*
 package com.ll.products.domain.search.dto;
 
 import com.ll.products.domain.search.document.ProductDocument;
@@ -34,3 +35,4 @@ public record ProductSearchResponse(
                 .build();
     }
 }
+*/
