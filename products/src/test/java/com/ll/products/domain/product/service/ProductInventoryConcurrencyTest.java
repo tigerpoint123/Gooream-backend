@@ -33,8 +33,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-//@ActiveProfiles("test")
-@ActiveProfiles("ci-test")
+@ActiveProfiles("test")
+//@ActiveProfiles("ci-test")
 @DisplayName("상품 재고 동시성 테스트")
 class ProductInventoryConcurrencyTest extends MySQLTestContainer {
 
