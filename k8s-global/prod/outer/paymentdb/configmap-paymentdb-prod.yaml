@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-db-config-prod
+data:
+  SPRING_PROFILES_ACTIVE: prod
+  MYSQL_DATABASE: payment_db

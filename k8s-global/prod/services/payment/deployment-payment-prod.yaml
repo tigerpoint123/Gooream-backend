@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+#이 파일 정의
+metadata:
+  name: payment-dpy-prod
+#동작 정의
+spec:
+  replicas: 1
+#  제어할 라벨
+  selector:
+    matchLabels:
+      app: payment-prod
+#      pod 정의
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/actuator/prometheus"
+        prometheus.io/port: "8881"
+      labels:
+        app: payment-prod
+#        컨테이너 정의
+    spec:
+      containers:
+        - name: payment-pod-prod
+          image: yuio7279/payment
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8087
+          resources:
+            limits:
+              cpu: "300m" # 1 vCPU
+              memory: "500Mi"  # 메모리 제한
+            requests:
+              cpu: "200m"  # 0.5 vCPU 보장 요청
+              memory: "300Mi"  # 메모리 보장 요청
+          env:
+            - name: JAVA_OPTS
+              value: "-Xms400M -Xmx400M" # 힙 메모리를 400MB로 고정
+          envFrom:
+            - configMapRef:
+                name: payment-config-prod
+            - secretRef:
+                name: secret-common-prod
+      restartPolicy: Always

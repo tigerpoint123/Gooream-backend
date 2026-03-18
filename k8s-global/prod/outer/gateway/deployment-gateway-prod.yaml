@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-dpy-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-prod
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/actuator/prometheus"
+        prometheus.io/port: "8881"
+      labels:
+        app: gateway-prod
+    spec:
+      containers:
+        - name: gateway-pod-prod
+          image: yuio7279/gateway
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: JAVA_OPTS
+              value: "-Xms400M -Xmx400M" # 힙 메모리를 400MB로 고정
+          envFrom:
+            - configMapRef:
+                name: gateway-config-prod
+            - secretRef:
+                name: secret-common-prod
+      restartPolicy: Always

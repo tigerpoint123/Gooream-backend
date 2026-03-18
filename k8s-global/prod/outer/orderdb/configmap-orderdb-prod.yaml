@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-db-config-prod
+data:
+  SPRING_PROFILES_ACTIVE: prod
+  MYSQL_DATABASE: order_db

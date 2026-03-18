@@ -1,0 +1,53 @@
+package com.ll.order.global.mock.controller;
+
+import com.ll.order.domain.model.vo.request.OrderPaymentRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/payments")
+public class PaymentMockController {
+    @PostMapping("/deposit")
+    public ResponseEntity<String> requestDepositPayment(
+            @RequestBody OrderPaymentRequest request
+    ) {
+        log.info("Mock Payment Service - 예치금 결제 요청: orderCode={}, amount={}", 
+                request.orderCode(), request.paidAmount());
+        
+        // 항상 성공으로 처리
+        log.info("Mock Payment Service - 예치금 결제 성공: orderCode={}", request.orderCode());
+        return ResponseEntity.ok("결제 완료");
+    }
+    @PostMapping("/toss")
+    public ResponseEntity<String> requestTossPayment(
+            @RequestBody OrderPaymentRequest request
+    ) {
+        log.info("Mock Payment Service - 토스 결제 요청: orderCode={}, amount={}, paymentKey={}", 
+                request.orderCode(), request.paidAmount(), request.paymentKey());
+        
+        // 항상 성공으로 처리
+        log.info("Mock Payment Service - 토스 결제 성공: orderCode={}", request.orderCode());
+        return ResponseEntity.ok("결제 완료");
+    }
+
+    @PostMapping("/refund")
+    public ResponseEntity<String> requestRefund(
+            @RequestBody Map<String, Object> request
+    ) {
+        String orderCode = (String) request.get("orderCode");
+        Integer refundAmount = (Integer) request.get("refundAmount");
+        String reason = (String) request.get("reason");
+        
+        log.info("Mock Payment Service - 환불 요청: orderCode={}, refundAmount={}, reason={}", 
+                orderCode, refundAmount, reason);
+        
+        // 항상 성공으로 처리
+        log.info("Mock Payment Service - 환불 성공: orderCode={}", orderCode);
+        return ResponseEntity.ok("환불 완료");
+    }
+}
+

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-db-config-dev
+data:
+  SPRING_PROFILES_ACTIVE: dev
+  MYSQL_DATABASE: product_db
+  TZ: "Asia/Seoul"

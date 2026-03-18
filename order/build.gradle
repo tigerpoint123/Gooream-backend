@@ -1,0 +1,47 @@
+description = 'order'
+
+springBoot {
+    mainClass = 'com.ll.order.OrderApplication'
+}
+
+dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    
+    implementation 'org.apache.httpcomponents.client5:httpclient5'
+
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // 서킷 브레이커
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3'
+    implementation 'io.github.resilience4j:resilience4j-circuitbreaker'
+    implementation 'io.github.resilience4j:resilience4j-retry'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // 테스트 컨테이너
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:mysql"
+
+    // Lombok for tests
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // swagger
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}")
+
+    runtimeOnly "mysql:mysql-connector-java:${mysqlVersion}"
+    runtimeOnly 'com.h2database:h2'
+}
+
+bootJar.enabled = true
+jar.enabled = false

@@ -1,0 +1,169 @@
+spring:
+  eureka:
+    client:
+      enabled: false     # Eureka 서버에 등록하지 않음
+  cloud:
+    discovery:
+      enabled: false   # Eureka 클라이언트 비활성화
+
+  # Database Configuration
+  datasource:
+    # MySQL 컨테이너 연결 설정 (docker-compose.yml의 order-mysql 컨테이너 사용)
+    # 컨테이너 실행: docker-compose up -d
+    url: jdbc:mysql://localhost:3307/orderdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: kissmyass
+    password: dickhead
+    
+    # H2 인메모리 DB를 사용하려면 아래 설정으로 변경
+    # url: jdbc:h2:mem:orderdb
+    # driver-class-name: org.h2.Driver
+    # username: ${DB_USER:sa}
+    # password: ${DB_PASSWORD:}
+
+  # H2 Console (H2 사용 시에만 활성화)
+  h2:
+    console:
+      enabled: false  # MySQL 사용 시 false로 설정
+      path: /h2-console
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # 개발 환경에서는 create-drop, 운영에서는 update 또는 validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect  # MySQL 사용
+        # H2를 사용하는 경우 아래로 변경
+        # dialect: org.hibernate.dialect.H2Dialect
+
+  kafka:
+    bootstrap-servers:
+      - localhost:9092
+
+# Mock Server 설정
+mock:
+  enabled: true  # Mock 서버 활성화 (로컬 개발 환경에서 다른 모듈의 API를 모킹)
+
+# External Service URLs
+  # Mock 서버 사용 시 (mock.enabled=true): User, Product, Cart는 localhost:8082 (Order 서버와 같은 포트)
+  # Payment 서비스는 실제 서버 실행 필요 (토스 결제 API 호출 등)
+external:
+  user-service:
+    url: http://localhost:8082  # Mock 사용 시: 8082
+    # url: http://localhost:8083  # 실제 서비스 포트
+  product-service:
+    url: http://localhost:8082  # Mock 사용 시: 8082
+    # url: http://localhost:8085  # 실제 서비스 포트
+  cart-service:
+    url: http://localhost:8082  # Mock 사용 시: 8082
+    # url: http://localhost:8089  # 실제 서비스 포트
+  payment-service:
+    url: http://localhost:8087  # 실제 Payment 서버 포트 (토스 결제 API 호출 필요)
+
+  # Payment Configuration
+payment:
+  widgetClientKey: ${PAYMENT_WIDGET_CLIENT_KEY:test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm}
+  successUrl: http://localhost:8082/api/orders/payment/success
+  failUrl: http://localhost:8082/api/orders/payment/fail
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        slidingWindowSize: 20           # 최근 20개 호출 기준
+        failureRateThreshold: 50        # 실패율 50% 이상이면 Open
+        waitDurationInOpenState: 30s    # 30초 동안 Open 유지
+        permittedNumberOfCallsInHalfOpenState: 3
+      productService:
+        slidingWindowSize: 20           # 최근 20개 호출 기준
+        failureRateThreshold: 50        # 실패율 50% 이상이면 Open
+        waitDurationInOpenState: 30s    # 30초 동안 Open 유지
+        permittedNumberOfCallsInHalfOpenState: 3
+      userService:
+        slidingWindowSize: 20           # 최근 20개 호출 기준
+        failureRateThreshold: 50        # 실패율 50% 이상이면 Open
+        waitDurationInOpenState: 30s    # 30초 동안 Open 유지
+        permittedNumberOfCallsInHalfOpenState: 3
+      cartService:
+        slidingWindowSize: 20           # 최근 20개 호출 기준
+        failureRateThreshold: 50        # 실패율 50% 이상이면 Open
+        waitDurationInOpenState: 30s    # 30초 동안 Open 유지
+        permittedNumberOfCallsInHalfOpenState: 3
+  retry:
+    instances:
+      paymentService:
+        maxAttempts: 3                  # 최대 3회 시도
+        waitDuration: 500ms             # 0.5초 간격 (지수 backoff는 필요 시 추가 설정)
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException
+          - com.ll.core.model.exception.BaseException
+      productService:
+        maxAttempts: 3                  # 최대 3회 시도
+        waitDuration: 500ms             # 0.5초 간격
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException
+          - com.ll.core.model.exception.BaseException
+      userService:
+        maxAttempts: 3                  # 최대 3회 시도
+        waitDuration: 500ms             # 0.5초 간격
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException
+          - com.ll.core.model.exception.BaseException
+      cartService:
+        maxAttempts: 3                  # 최대 3회 시도
+        waitDuration: 500ms             # 0.5초 간격
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException
+          - com.ll.core.model.exception.BaseException
+      orderEventProducer:
+        maxAttempts: 3                  # 최대 3회 시도
+        waitDuration: 500ms             # 0.5초 간격
+        retryExceptions:
+          - org.apache.kafka.common.errors.TimeoutException
+          - org.apache.kafka.common.errors.NetworkException
+          - org.apache.kafka.common.errors.RetriableException
+          - org.springframework.kafka.KafkaException
+        ignoreExceptions:
+          - com.ll.core.model.exception.BaseException
+
+# Order Event Outbox 설정
+order:
+  outbox:
+    max-retry-count: 5                    # 최대 재시도 횟수
+    republish-delay-minutes: 5             # 재발행 지연 시간 (분)
+    scheduler:
+      enabled: true                        # 스케줄러 활성화 여부
+      cron: "0 */5 * * * ?"                # 실행 주기 (5분마다, cron 표현식)
+  # 보상 로직 재시도 설정
+  compensation:
+    max-retry-count: 5                     # 최대 재시도 횟수
+    scheduler:
+      enabled: true                        # 스케줄러 활성화 여부
+      cron: "0 */10 * * * ?"               # 실행 주기 (10분마다, cron 표현식)
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+current:
+  domain: "http://localhost:8082"
+swagger:
+  servers:
+    - "http://localhost:8000"
+    - "http://localhost:8082"

@@ -1,0 +1,98 @@
+spring:
+  # MySQL 데이터베이스 설정
+  datasource:
+    url: jdbc:mysql://localhost:3306/products?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+  # JPA 설정
+  jpa:
+    hibernate:
+      # 개발 환경
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  # Elasticsearch 설정
+  # elasticsearch:
+  #   uris: http://localhost:9200
+
+  kafka:
+    bootstrap-servers:
+      - localhost:9092
+    consumer:
+      group-id: product-indexing-group
+      properties:
+        allow.auto.create.topics: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 500ms
+      lettuce:
+        pool:
+          max-active: 5
+        shutdown-timeout: 100ms
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      embedding:
+        enabled: ${OPENAI_EMBEDDING_ENABLED}
+        options:
+          model: text-embedding-3-large
+          dimensions: 3072
+      chat:
+        options:
+          model: gpt-4.1
+          temperature: 0.6
+
+# 로깅 설정
+logging:
+  level:
+    com.ll.products.domain.search: DEBUG
+    com.ll.products.domain.recommendation: DEBUG
+    org.springframework.ai: DEBUG
+    # org.springframework.data.elasticsearch: DEBUG
+    # org.elasticsearch: DEBUG
+
+eureka:
+  client:
+    enabled: false
+
+api:
+  user:
+    base-url: http://localhost:8084
+
+# AWS S3 설정
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+      base-url: https://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}
+    stack:
+      auto: false
+
+management:
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+# Qdrant 설정
+qdrant:
+  host: localhost
+  port: 6334
+  collection-name: products
+
+swagger:
+  servers:
+    - "http://localhost:8000"
+    - "http://localhost:8085"

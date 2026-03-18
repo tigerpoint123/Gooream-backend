@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-db-dpy-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-db-dev
+  template:
+    metadata:
+      labels:
+        app: product-db-dev
+    spec:
+      containers:
+        - name: product-db-pod-dev
+          image: mysql:8.2.0
+          envFrom:
+            - configMapRef:
+                name: product-db-config-dev
+            - secretRef:
+                name: secret-common-dev
+          ports:
+            - containerPort: 3306
+          args:
+            - "--character-set-server=utf8mb4"
+            - "--collation-server=utf8mb4_unicode_ci"
+            - "--default-authentication-plugin=mysql_native_password"
+          volumeMounts:
+            - name: product-db-data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: product-db-data
+          emptyDir: {}   # 개발용, 나중에 PVC로 변경 가능

@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    # MySQL 컨테이너 연결 설정 (docker-compose.yml의 order-mysql 컨테이너 사용)
+    url: jdbc:mysql://localhost:3307/orderdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: kissmyass
+    password: dickhead
+    # H2 인메모리 DB를 사용하려면 아래 설정으로 변경
+    # url: jdbc:h2:mem:testdb
+    # driver-class-name: org.h2.Driver
+    # username: sa
+    # password:
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+        # H2를 사용하는 경우 아래로 변경
+        # dialect: org.hibernate.dialect.H2Dialect
+        # 쿼리 통계 활성화
+        generate_statistics: true
+        # 쿼리 로깅
+        use_sql_comments: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.hibernate.stat: DEBUG
+    # 락 쿼리 확인을 위한 로깅
+    com.ll.products: INFO  # Product 서비스 로그 (락 쿼리 실행 로그 포함)
+    com.ll.order.domain.mock: INFO  # Mock 서버 로그
+    com.ll.order.domain.client: DEBUG  # ProductServiceClient 로그
+
+current:
+  domain: "http://localhost:8082"
+
+# Slack 설정 (테스트 환경에서는 Unknown 값 사용 - SlackWebhookService에서 Unknown일 경우 메시지 전송하지 않음)
+slack:
+  webhook-url: Unknown
+
