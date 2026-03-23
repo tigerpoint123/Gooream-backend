@@ -59,9 +59,7 @@ public class CartOrderCreationStrategy extends AbstractOrderCreationService {
 
     @Override
     protected void validateInventory(Object request, String userCode) {
-        if (!(request instanceof OrderCartItemRequest cartRequest)) {
-            throw new IllegalArgumentException("OrderCartItemRequest 타입이 아닙니다.");
-        }
+        OrderCartItemRequest cartRequest = isCartRequest(request);
 
         for (ProductRequest product : cartRequest.products()) {
             // 재고 및 판매 상태 검증 (OrderValidator의 공통 메서드 사용)
@@ -74,9 +72,7 @@ public class CartOrderCreationStrategy extends AbstractOrderCreationService {
     @Override
     @Transactional
     protected OrderCreationResult createOrderWithItems(Object request, UserResponse userInfo) {
-        if (!(request instanceof OrderCartItemRequest cartRequest)) {
-            throw new IllegalArgumentException("OrderCartItemRequest 타입이 아닙니다.");
-        }
+        OrderCartItemRequest cartRequest = isCartRequest(request);
 
         CartItemsResponse cartInfo = getCartInfo(userInfo.code());
 
@@ -122,9 +118,7 @@ public class CartOrderCreationStrategy extends AbstractOrderCreationService {
     @Override
     @Transactional
     protected void processDepositPayment(Order order, List<OrderItem> orderItems, Object request) {
-        if (!(request instanceof OrderCartItemRequest cartRequest)) {
-            throw new IllegalArgumentException("OrderCartItemRequest 타입이 아닙니다.");
-        }
+        OrderCartItemRequest cartRequest = isCartRequest(request);
 
         OrderPaymentRequest orderPaymentRequest = OrderPaymentRequest.from(
                 order,
@@ -173,10 +167,15 @@ public class CartOrderCreationStrategy extends AbstractOrderCreationService {
 
     @Override
     protected PaidType extractPaidType(Object request) {
+        OrderCartItemRequest cartRequest = isCartRequest(request);
+        return cartRequest.paidType();
+    }
+
+    private OrderCartItemRequest isCartRequest(Object request) {
         if (!(request instanceof OrderCartItemRequest cartRequest)) {
             throw new IllegalArgumentException("OrderCartItemRequest 타입이 아닙니다.");
         }
-        return cartRequest.paidType();
+        return cartRequest;
     }
 
 }
