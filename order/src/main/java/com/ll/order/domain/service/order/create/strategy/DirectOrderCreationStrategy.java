@@ -55,9 +55,7 @@ public class DirectOrderCreationStrategy extends AbstractOrderCreationService {
 
     @Override
     protected void validateInventory(Object request, String userCode) {
-        if (!(request instanceof OrderDirectRequest directRequest)) {
-            throw new IllegalArgumentException("OrderDirectRequest 타입이 아닙니다.");
-        }
+        OrderDirectRequest directRequest = toDirectRequest(request);
 
         // 재고 및 판매 상태 검증 (OrderValidator의 공통 메서드 사용)
         orderValidator.validateProductInventory(directRequest.productCode(), directRequest.quantity());
@@ -66,9 +64,7 @@ public class DirectOrderCreationStrategy extends AbstractOrderCreationService {
     @Override
     @Transactional
     protected OrderCreationResult createOrderWithItems(Object request, UserResponse userInfo) {
-        if (!(request instanceof OrderDirectRequest directRequest)) {
-            throw new IllegalArgumentException("OrderDirectRequest 타입이 아닙니다.");
-        }
+        OrderDirectRequest directRequest = toDirectRequest(request);
 
         ProductResponse productInfo = getProductInfo(directRequest.productCode());
 
@@ -99,9 +95,7 @@ public class DirectOrderCreationStrategy extends AbstractOrderCreationService {
     @Override
     @Transactional
     protected void processDepositPayment(Order order, List<OrderItem> orderItems, Object request) {
-        if (!(request instanceof OrderDirectRequest directRequest)) {
-            throw new IllegalArgumentException("OrderDirectRequest 타입이 아닙니다.");
-        }
+        OrderDirectRequest directRequest = toDirectRequest(request);
 
         OrderPaymentRequest orderPaymentRequest = OrderPaymentRequest.from(
                 order,
@@ -149,10 +143,15 @@ public class DirectOrderCreationStrategy extends AbstractOrderCreationService {
 
     @Override
     protected PaidType extractPaidType(Object request) {
+        OrderDirectRequest directRequest = toDirectRequest(request);
+        return directRequest.paidType();
+    }
+
+    private OrderDirectRequest toDirectRequest(Object request) {
         if (!(request instanceof OrderDirectRequest directRequest)) {
             throw new IllegalArgumentException("OrderDirectRequest 타입이 아닙니다.");
         }
-        return directRequest.paidType();
+        return directRequest;
     }
 
 }
