@@ -1,13 +1,8 @@
 package com.ll.order.domain.service.order;
 
 import com.ll.core.model.exception.BaseException;
-//import com.ll.core.model.vo.kafka.RefundEvent;
 import com.ll.core.model.vo.kafka.PaymentRefundRequestEvent;
-import com.ll.order.global.client.DepositServiceClient;
-import com.ll.order.global.client.PaymentServiceClient;
-import com.ll.order.global.client.ProductServiceClient;
-import com.ll.order.global.client.UserServiceClient;
-import com.ll.order.global.exception.OrderErrorCode;
+import com.ll.order.domain.model.dto.OrderWithItems;
 import com.ll.order.domain.model.entity.Order;
 import com.ll.order.domain.model.entity.OrderItem;
 import com.ll.order.domain.model.entity.history.OrderHistoryEntity;
@@ -23,7 +18,6 @@ import com.ll.order.domain.model.vo.response.order.OrderCreateResponse;
 import com.ll.order.domain.model.vo.response.order.OrderDetailResponse;
 import com.ll.order.domain.model.vo.response.order.OrderPageResponse;
 import com.ll.order.domain.model.vo.response.order.OrderStatusUpdateResponse;
-import com.ll.order.domain.model.vo.response.product.ProductResponse;
 import com.ll.order.domain.model.vo.response.user.UserResponse;
 import com.ll.order.domain.repository.OrderHistoryJpaRepository;
 import com.ll.order.domain.repository.OrderItemJpaRepository;
@@ -32,10 +26,12 @@ import com.ll.order.domain.service.compensation.CompensationService;
 import com.ll.order.domain.service.event.InventoryRollbackEventOutboxService;
 import com.ll.order.domain.service.event.OrderEventService;
 import com.ll.order.domain.service.event.PaymentRefundRequestEventOutboxService;
-//import com.ll.order.domain.service.event.RefundEventOutboxService;
 import com.ll.order.domain.service.inventory.OrderInventoryService;
 import com.ll.order.domain.service.order.create.strategy.CartOrderCreationStrategy;
 import com.ll.order.domain.service.order.create.strategy.DirectOrderCreationStrategy;
+import com.ll.order.global.client.PaymentServiceClient;
+import com.ll.order.global.client.UserServiceClient;
+import com.ll.order.global.exception.OrderErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,13 +45,13 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class OrderServiceImpl implements OrderService {
-
+    //TODO : join을 통해 조회하는 새로운 조회 메서드를 만들고, test 코드에서 성능 출력 후 비교
+    // TODO : 전체 조회에서 keyword 사용 고민
     @Value("${current.domain}")
     private String currentDomain;
 
@@ -64,7 +60,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderHistoryJpaRepository orderHistoryJpaRepository;
 
     private final UserServiceClient userServiceClient;
-    private final ProductServiceClient productServiceClient;
     private final PaymentServiceClient paymentApiClient;
 
     private final OrderValidator orderValidator;
@@ -81,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderPageResponse findAllOrders(String userCode, String keyword, Pageable pageable) {
-        UserResponse userInfo = getUserInfo(userCode);
+        UserResponse userInfo = getUserInfo(userCode); // TODO : 매번 주문은 회원한테 api 요청을 해야하나 ? > gateway에서 회원 여부를 확인하고 있음
 
         // keyword가 있으면 상품명으로 검색, 없으면 전체 조회
         Page<Order> orderPage;
@@ -97,14 +92,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDetailResponse findOrderDetails(String orderCode) {
-        Order order = findOrderByCode(orderCode);
-
-        List<OrderItem> orderItems = orderItemJpaRepository.findByOrderId(order.getId()); // 쿼리 날리는지 디버깅 해보도록.
-        List<OrderDetailResponse.ItemInfo> itemInfos = orderItems.stream()
-                .map(item -> OrderDetailResponse.ItemInfo.from(item, getProductInfo(item.getProductCode())))
-                .collect(Collectors.toList());
-
-        return OrderDetailResponse.from(order, itemInfos);
+        List<OrderWithItems> rows = orderJpaRepository.findOrderItemsByCode(orderCode);
+        if (rows.isEmpty()) {
+            throw new BaseException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+        return OrderDetailResponse.from(rows);
     }
 
     @Override
@@ -133,6 +125,7 @@ public class OrderServiceImpl implements OrderService {
         order.changeStatus(target);
 
         // 주문 상태 변경 이력 저장
+        // TODO: Order 조회 단계에서 OrderItem까지 함께 조회하도록 개선(히스토리 생성에 필요한 데이터 N+1 방지)
         List<OrderItem> orderItems = orderItemJpaRepository.findByOrderId(order.getId());
         String reason = target == OrderStatus.CANCELLED ? "주문 취소" : "주문 상태 변경";
         OrderHistoryEntity statusHistory = OrderHistoryEntity.createStatusChangeHistory(
@@ -171,6 +164,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void handleOrderCancel(Order order) {
+        // TODO: 주문 취소 처리에 필요한 OrderItem 조회를 `join fetch`/`EntityGraph` 등으로 한 번에 가져오도록 개선
         List<OrderItem> orderItems = orderItemJpaRepository.findByOrderId(order.getId());
         String buyerCode = order.getBuyerCode();
 
@@ -230,6 +224,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BaseException(OrderErrorCode.ORDER_ALREADY_PROCESSED);
         }
 
+        // TODO: success/fail 경로 모두에서 OrderItem을 재조회함. try/catch 밖에서 1회만 조회하도록 리팩터링(중복 쿼리 제거)
         OrderPaymentRequest orderPaymentRequest = OrderPaymentRequest.from(
                 order,
                 order.getBuyerCode(),
@@ -259,6 +254,7 @@ public class OrderServiceImpl implements OrderService {
             orderJpaRepository.save(order);
 
             // 주문 상태 변경 이력 저장 (결제 실패)
+            // TODO: 위의 TODO대로 공통으로 OrderItem을 먼저 조회해두면 이 중복 조회를 제거할 수 있음
             List<OrderItem> orderItems = orderItemJpaRepository.findByOrderId(order.getId());
             OrderHistoryEntity failHistory = OrderHistoryEntity.createPaymentFailHistory(
                     order, orderItems, previousStatus, "토스", e.getMessage());
@@ -348,14 +344,6 @@ public class OrderServiceImpl implements OrderService {
                 URLEncoder.encode(orderName, StandardCharsets.UTF_8),
                 response.totalPrice());
         return Optional.of(redirectUrl);
-    }
-
-    private ProductResponse getProductInfo(String productCode) {
-        return Optional.ofNullable(productServiceClient.getProductByCode(productCode))
-                .orElseThrow(() -> {
-                    log.warn("상품을 찾을 수 없습니다. productCode: {}", productCode);
-                    return new BaseException(OrderErrorCode.PRODUCT_NOT_FOUND);
-                });
     }
 
     private UserResponse getUserInfo(String userCode) {

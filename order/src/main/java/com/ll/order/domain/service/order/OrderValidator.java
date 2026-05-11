@@ -21,37 +21,6 @@ public class OrderValidator {
 
     private final ProductServiceClient productServiceClient;
 
-    public List<OrderValidateResponse.ItemInfo> validateProducts(List<ProductRequest> products) {
-        Set<String> duplicatedCheck = new HashSet<>();
-        List<OrderValidateResponse.ItemInfo> itemInfos = new ArrayList<>();
-
-        for (ProductRequest productRequest : products) {
-            if (!duplicatedCheck.add(productRequest.productCode())) {
-                log.warn("중복된 상품 코드가 포함되어 있습니다. productCode: {}", productRequest.productCode());
-                throw new BaseException(OrderErrorCode.DUPLICATE_PRODUCT_CODE);
-            }
-
-            ProductResponse productInfo = getProductInfo(productRequest.productCode());
-
-            // 재고 및 판매 상태 검증 (공통 메서드 사용)
-            validateProductInventory(productInfo, productRequest.quantity());
-
-            if (productRequest.price() != productInfo.price()) {
-                log.warn("요청한 상품 가격이 실제 가격과 일치하지 않습니다. productCode: {}, 요청 가격: {}, 실제 가격: {}",
-                        productRequest.productCode(), productRequest.price(), productInfo.price());
-                throw new BaseException(OrderErrorCode.PRODUCT_PRICE_MISMATCH);
-            }
-
-            itemInfos.add(OrderValidateResponse.ItemInfo.from(
-                    productRequest.productCode(),
-                    productRequest.quantity(),
-                    productInfo.price()
-            ));
-        }
-
-        return itemInfos;
-    }
-
     public void validateOrderStatusChange(OrderStatus current, OrderStatus target) {
         if (!current.canTransitionTo(target)) {
             log.warn("해당 상태로 전환할 수 없습니다. current: {}, target: {}", current, target);

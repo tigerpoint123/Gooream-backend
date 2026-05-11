@@ -51,3 +51,5 @@ troubleshooting.md
 
 ### Test Data ###
 products/src/main/resources/data/products.csv
+
+.env.local

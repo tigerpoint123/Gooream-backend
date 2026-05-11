@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import jakarta.servlet.http.HttpSession;
+
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -26,10 +27,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderController implements OrderControllerSwagger {
 
-    private final OrderService orderService;
-
     @Value("${current.domain}")
     private String currentDomain;
+
+    private final OrderService orderService;
 
     @PostMapping("/cartItems")
     public Object createCartItemOrder(
@@ -47,7 +48,7 @@ public class OrderController implements OrderControllerSwagger {
     @PostMapping("/direct")
     public Object createDirectOrder(
             @Valid @RequestBody OrderDirectRequest request,
-                @RequestHeader("X-User-Code") String userCode
+            @RequestHeader("X-User-Code") String userCode
     ) {
         OrderCreateResponse response = orderService.createDirectOrder(request, userCode);
 
@@ -72,7 +73,7 @@ public class OrderController implements OrderControllerSwagger {
     // TODO 상품 상세 응답에 외부 상품 정보 포함하거나 불필요 호출 제거 검토
     public ResponseEntity<BaseResponse<OrderDetailResponse>> getOrderDetails(
             @PathVariable String orderCode,
-                @RequestHeader("X-User-Code") String userCode
+            @RequestHeader("X-User-Code") String userCode
     ) {
         OrderDetailResponse response = orderService.findOrderDetails(orderCode);
 
@@ -83,7 +84,7 @@ public class OrderController implements OrderControllerSwagger {
     public ResponseEntity<BaseResponse<OrderStatusUpdateResponse>> updateOrderStatus(
             @PathVariable String orderCode,
             @Valid @RequestBody OrderStatusUpdateRequest request,
-                @RequestHeader("X-User-Code") String userCode
+            @RequestHeader("X-User-Code") String userCode
     ) {
         OrderStatusUpdateResponse response = orderService.updateOrderStatus(orderCode, request, userCode);
 
@@ -140,12 +141,12 @@ public class OrderController implements OrderControllerSwagger {
             if (userCode == null) {
                 throw new IllegalArgumentException("사용자 코드를 찾을 수 없습니다. 세션이 만료되었을 수 있습니다.");
             }
-            
+
             orderService.completeDepositChargeWithKey(userCode, paymentKey, Integer.parseInt(amount), orderId);
-            
+
             // 세션에서 userCode 제거
             session.removeAttribute("depositChargeUserCode");
-            
+
             return new RedirectView(currentDomain + "/orders/deposit/charge/success-page?amount=" + amount);
         } catch (Exception e) {
             String encodedErrorMessage = URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
@@ -172,7 +173,7 @@ public class OrderController implements OrderControllerSwagger {
         if (amount == null || amount <= 0) {
             throw new IllegalArgumentException("충전 금액은 0보다 커야 합니다.");
         }
-        
+
         // 토스 결제 페이지로 리다이렉트
         String redirectUrl = String.format(currentDomain + "/orders/deposit/charge?amount=%d&userCode=%s",
                 amount,

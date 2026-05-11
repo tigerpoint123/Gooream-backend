@@ -1,9 +1,7 @@
 package com.ll.order.domain.model.vo.response.order;
 
-import com.ll.order.domain.model.entity.Order;
-import com.ll.order.domain.model.entity.OrderItem;
+import com.ll.order.domain.model.dto.OrderWithItems;
 import com.ll.order.domain.model.enums.order.OrderStatus;
-import com.ll.order.domain.model.vo.response.product.ProductResponse;
 
 import java.util.List;
 
@@ -11,53 +9,41 @@ public record OrderDetailResponse(
         Long orderId,
         OrderStatus status,
         int totalPrice,
-        UserInfo userInfo,
-        List<ItemInfo> items
+        List<OrderItemInfo> orderItems
 ) {
-    public static OrderDetailResponse from(Order order, List<ItemInfo> items) {
+    public static OrderDetailResponse from(List<OrderWithItems> rows) {
+        OrderWithItems first = rows.getFirst();
         return new OrderDetailResponse(
-                order.getId(),
-                order.getOrderStatus(),
-                order.getTotalPrice(),
-                UserInfo.from(order),
-                items
+                first.orderId(),
+                first.orderStatus(),
+                first.totalPrice(),
+                rows.stream()
+                        .filter(row -> row.orderItemId() != null)
+                        .map(OrderItemInfo::from)
+                        .toList()
         );
     }
 
-    public record UserInfo(
-            Long userId,
-            String address
-    ) {
-        public static UserInfo from(Order order) {
-            return new UserInfo(
-                    order.getBuyerId(),
-                    order.getAddress()
-            );
-        }
-    }
-
-    public record ItemInfo(
+    public record OrderItemInfo(
+            Long orderItemId,
             String orderItemCode,
             Long productId,
+            String productCode,
             String sellerCode,
             String productName,
-            int quantity,
-            int price,
-            String productImage
+            Integer quantity,
+            Integer price
     ) {
-        public static ItemInfo from(OrderItem orderItem, ProductResponse product) {
-            String productImage = product.images() != null && !product.images().isEmpty()
-                    ? product.images().get(0).url()
-                    : null;
-
-            return new ItemInfo(
-                    orderItem.getCode(),
-                    orderItem.getProductId(),
-                    orderItem.getSellerCode(),
-                    orderItem.getProductName(),
-                    orderItem.getQuantity(),
-                    orderItem.getPrice(),
-                    productImage
+        private static OrderItemInfo from(OrderWithItems row) {
+            return new OrderItemInfo(
+                    row.orderItemId(),
+                    row.orderItemCode(),
+                    row.productId(),
+                    row.productCode(),
+                    row.sellerCode(),
+                    row.productName(),
+                    row.quantity(),
+                    row.price()
             );
         }
     }
